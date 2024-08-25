@@ -3,7 +3,7 @@ import carModel from "@/assets/models/su7.glb";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import Freespace from "./freespace";
-import { freespaceData1 } from "../mock/freespace";
+import { freespaceData1, freespaceData2 } from "../mock/freespace";
 
 const gltfLoader = new GLTFLoader();
 
@@ -19,7 +19,7 @@ class Renderer {
 
   constructor() {
     this.renderers = {
-      freespace: new Freespace(this.scene),
+      freespace: () => new Freespace(this.scene),
     };
   }
 
@@ -81,7 +81,8 @@ class Renderer {
   }
 
   mockData() {
-    this.renderers.freespace.draw(freespaceData1);
+    this.renderers.freespace().draw(freespaceData1);
+    this.renderers.freespace().draw(freespaceData2);
   }
 
   registerDefaultEvents() {
