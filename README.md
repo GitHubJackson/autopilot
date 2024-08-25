@@ -6,6 +6,8 @@
 
 暂时只支持本地预览效果，线上地址等我有空弄一个
 
+找到对应文章末尾对应的 tag，下载对应代码到本地预览。最新版的代码可能跟你阅读的文章对不上
+
 ```bash
 git clone https://github.com/GitHubJackson/autopilot.git
 cd autopilot
