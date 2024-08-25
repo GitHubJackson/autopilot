@@ -1,7 +1,7 @@
 import * as THREE from "three";
-// import carModel from "../assets/models/su7.glb";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import carModel from "@/assets/models/su7.glb";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import Freespace from "./freespace";
 import { freespaceData1 } from "../mock/freespace";
 
@@ -24,7 +24,7 @@ class Renderer {
   }
 
   loadEgoCar() {
-    gltfLoader.load("./su7.glb", (gltf) => {
+    gltfLoader.load(carModel, (gltf) => {
       const car = gltf.scene;
       car.scale.set(0.1, 0.1, 0.1);
       this.scene.add(car);
