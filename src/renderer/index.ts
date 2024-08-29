@@ -3,7 +3,15 @@ import carModel from "@/assets/models/su7.glb";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import Freespace from "./freespace";
-import { freespaceData1, freespaceData2 } from "../mock/freespace";
+import {
+  arrowData1,
+  cubeData1,
+  freespaceData1,
+  freespaceData2,
+} from "../mock/freespace";
+import Cube from "./cube";
+import Text from "./text";
+import Arrow from "./arrow";
 
 const gltfLoader = new GLTFLoader();
 
@@ -20,6 +28,9 @@ class Renderer {
   constructor() {
     this.renderers = {
       freespace: () => new Freespace(this.scene),
+      cube: () => new Cube(this.scene),
+      text: () => new Text(this.scene),
+      arrow: () => new Arrow(this.scene),
     };
   }
 
@@ -40,10 +51,6 @@ class Renderer {
     camera.position.set(0, 1, 1.8);
     this.camera = camera;
     const scene = this.scene;
-    // const geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-    // const material = new THREE.MeshNormalMaterial();
-    // const mesh = new THREE.Mesh(geometry, material);
-    // scene.add(mesh);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(width, height);
     this.renderer = renderer;
@@ -67,14 +74,13 @@ class Renderer {
     // 50表示网格模型的尺寸大小，25表示纵横细分线条数量
     const gridHelper = new THREE.GridHelper(50, 20);
     scene.add(gridHelper);
-    // ===
     this.loadEgoCar();
     this.registerDefaultEvents();
-    this.mockData();
+    setTimeout(() => {
+      this.mockData();
+    }, 5000);
 
     function animate() {
-      // mesh.rotation.x = time / 2000;
-      // mesh.rotation.y = time / 1000;
       controls.update();
       renderer.render(scene, camera);
     }
@@ -83,6 +89,8 @@ class Renderer {
   mockData() {
     this.renderers.freespace().draw(freespaceData1);
     this.renderers.freespace().draw(freespaceData2);
+    this.renderers.cube().draw(cubeData1);
+    this.renderers.arrow().draw(arrowData1);
   }
 
   registerDefaultEvents() {
