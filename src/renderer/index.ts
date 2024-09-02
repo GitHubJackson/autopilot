@@ -12,6 +12,7 @@ import {
 import Cube from "./cube";
 import Text from "./text";
 import Arrow from "./arrow";
+import Polygon from "./polygon";
 
 const gltfLoader = new GLTFLoader();
 
@@ -31,6 +32,7 @@ class Renderer {
       cube: () => new Cube(this.scene),
       text: () => new Text(this.scene),
       arrow: () => new Arrow(this.scene),
+      polygon: () => new Polygon(this.scene),
     };
   }
 
@@ -91,6 +93,7 @@ class Renderer {
     this.renderers.freespace().draw(freespaceData2);
     this.renderers.cube().draw(cubeData1);
     this.renderers.arrow().draw(arrowData1);
+    this.renderers.polygon().draw();
   }
 
   registerDefaultEvents() {
