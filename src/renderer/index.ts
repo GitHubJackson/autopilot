@@ -8,11 +8,15 @@ import {
   cubeData1,
   freespaceData1,
   freespaceData2,
+  polygonCylinderData1,
+  polygonCylinderData2,
+  polygonCylinderData3,
+  polygonCylinderData4,
 } from "../mock/freespace";
 import Cube from "./cube";
 import Text from "./text";
 import Arrow from "./arrow";
-import Polygon from "./polygon";
+import PolygonCylinder from "./polygonCylinder";
 
 const gltfLoader = new GLTFLoader();
 
@@ -32,7 +36,7 @@ class Renderer {
       cube: () => new Cube(this.scene),
       text: () => new Text(this.scene),
       arrow: () => new Arrow(this.scene),
-      polygon: () => new Polygon(this.scene),
+      polygonCylinder: () => new PolygonCylinder(this.scene),
     };
   }
 
@@ -73,6 +77,9 @@ class Renderer {
     scene.add(directionalLight);
     // const dirLightHelper = new THREE.DirectionalLightHelper(directionalLight, 5,0xff0000);
     // scene.add(dirLightHelper);
+    // const axes = new THREE.AxesHelper(0.6);
+    // axes.position.y = 0.05;
+    // this.scene.add(axes);
     // 50表示网格模型的尺寸大小，25表示纵横细分线条数量
     const gridHelper = new THREE.GridHelper(50, 20);
     scene.add(gridHelper);
@@ -93,7 +100,10 @@ class Renderer {
     this.renderers.freespace().draw(freespaceData2);
     this.renderers.cube().draw(cubeData1);
     this.renderers.arrow().draw(arrowData1);
-    this.renderers.polygon().draw();
+    this.renderers.polygonCylinder().draw(polygonCylinderData1);
+    this.renderers.polygonCylinder().draw(polygonCylinderData2);
+    this.renderers.polygonCylinder().draw(polygonCylinderData3);
+    this.renderers.polygonCylinder().draw(polygonCylinderData4);
   }
 
   registerDefaultEvents() {
