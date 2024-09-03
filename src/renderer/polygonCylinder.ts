@@ -10,7 +10,7 @@ export class PolygonCylinder {
 
   draw(data: IPolygonCylinder) {
     const { contour, height, color = { r: 0, g: 0, b: 0 } } = data;
-    // 确保顶点顺序是否为逆时针
+    // 确保顶点顺序为逆时针
     if (THREE.ShapeUtils.isClockWise(contour)) {
       contour.reverse();
     }
@@ -26,7 +26,7 @@ export class PolygonCylinder {
       vertices.push([current.x, current?.y + height, current.z]);
       normals.push([0, 1, 0]);
       // 设置顶面索引, 底面一般看不到, 所以可以不用设置索引
-      // 三个点确定一个面, 注意逆时针排序
+      // 三个点确定一个面, 注意按逆时针方向加入顶点索引
       if (i >= 2) {
         indexes[indexesIndex] = 0;
         indexes[indexesIndex + 1] = i - 1;
@@ -62,7 +62,7 @@ export class PolygonCylinder {
       }
       indexesIndex += 6;
     }
-    // 初始化缓冲几何体以及类型化数组
+    // 设置缓冲几何体属性
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute(
       "position",
@@ -88,7 +88,7 @@ export default PolygonCylinder;
 
 export interface IPolygonCylinder {
   id: string;
-  // 顶点，只需要上顶面几个顶点
+  // 顶点，只需要顶面几个顶点
   contour: IPos[];
   // 高度
   height: number;
