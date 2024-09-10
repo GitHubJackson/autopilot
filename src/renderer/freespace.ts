@@ -42,7 +42,7 @@ class Freespace {
     material.opacity = color.a || 1;
     const mesh = new THREE.Mesh(shapeGeometry, material);
     mesh.position.set(position.x, position.y, position.z || 0);
-    mesh.rotateX(-Math.PI / 2);
+    // mesh.rotateX(-Math.PI / 2);
     this.scene.add(mesh);
   }
 }

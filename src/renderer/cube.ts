@@ -73,6 +73,7 @@ class Cube {
     // @ts-ignore
     mesh.arrowMesh = arrowMesh;
     group.add(arrowMesh);
+    // group.rotateY(Math.PI);
     this.scene.add(group);
     // MOCK
     // const group2 = group.clone();

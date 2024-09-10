@@ -11,10 +11,10 @@ export const freespaceData1: IFreespace = {
     z: 0,
   },
   contour: [
-    { x: -1, y: -5, z: 0 },
+    { x: -1, y: -30, z: 0 },
     { x: -1, y: 10, z: 0 },
     { x: 0.6, y: 10, z: 0 },
-    { x: 0.6, y: -5, z: 0 },
+    { x: 0.6, y: -30, z: 0 },
   ],
   // 洞可能有多个，所以这里应该设置成二维数组
   // holes: [
@@ -40,10 +40,10 @@ export const freespaceData2: IFreespace = {
     z: 0,
   },
   contour: [
-    { x: -10, y: 1, z: 0 },
-    { x: -10, y: 4, z: 0 },
-    { x: 10, y: 1, z: 0 },
-    { x: 10, y: 4, z: 0 },
+    { x: 10, y: -3, z: 0 },
+    { x: 10, y: -1, z: 0 },
+    { x: -10, y: -1, z: 0 },
+    { x: -10, y: -3, z: 0 },
   ],
   color: {
     r: 58,
@@ -57,8 +57,8 @@ export const cubeData1: ICube = {
   type: "BUS",
   position: {
     x: 0,
-    y: 0.21,
-    z: -2,
+    y: -2,
+    z: 0.21,
   },
   color: {
     r: 0,
@@ -81,8 +81,8 @@ export const textData1 = {
   },
   position: {
     x: 0,
-    y: 0.5,
-    z: -2,
+    y: -2,
+    z: 0.5,
   },
 };
 
@@ -95,11 +95,11 @@ export const arrowData1: IArrow = {
 export const polygonCylinderData1: IPolygonCylinder = {
   id: "polygonCylinderData1",
   contour: [
-    { x: 0.6, y: 0, z: -0.4 },
-    { x: 0.6, y: 0, z: -0.8 },
-    { x: 0.4, y: 0, z: -0.8 },
-    { x: 0.2, y: 0, z: -0.6 },
-    { x: 0.4, y: 0, z: -0.4 },
+    { x: 0.6, y: -0.4, z: 0 },
+    { x: 0.6, y: -0.8, z: 0 },
+    { x: 0.4, y: -0.8, z: 0 },
+    { x: 0.2, y: -0.6, z: 0 },
+    { x: 0.4, y: -0.4, z: 0 },
   ],
   height: 0.16,
   color: {

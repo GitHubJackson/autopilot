@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "polyline-normals": "^2.0.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "three": "^0.167.1"
@@ -27,6 +28,8 @@
     "globals": "^15.9.0",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1"
+    "vite": "^5.4.1",
+    "vite-plugin-commonjs": "^0.10.1",
+    "vite-plugin-node-polyfills": "^0.22.0"
   }
 }
