@@ -56,7 +56,7 @@ export const cubeData1: ICube = {
   id: "cube1",
   type: "BUS",
   position: {
-    x: 0,
+    x: -1,
     y: -2,
     z: 0.21,
   },
