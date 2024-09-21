@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import * as THREE from "three";
-import carModel from "@/assets/models/su7.glb";
-import carModelWithDraco from "@/assets/models/su7-draco.glb";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import Freespace from "./freespace";
 import {
@@ -22,10 +19,8 @@ import Arrow from "./arrow";
 import PolygonCylinder from "./polygonCylinder";
 import Line from "./line";
 import { lineData1, lineData2, lineData3, lineData4 } from "../mock/line";
-import { loadDracoGLTFWithPromise, loadGLTFWithPromise } from "../helper";
-import { abortWrapper } from "../helper/promise";
 import { EViewType } from "../types/renderer";
-import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+import EgoCar from "./egoCar";
 
 const manager = new THREE.LoadingManager();
 manager.onLoad = () => {
@@ -34,10 +29,8 @@ manager.onLoad = () => {
 manager.onProgress = (url, loaded, total) => {
   console.log("===loading", url, loaded, total);
 };
-// const gltfLoader = new GLTFLoader();
 
 class Renderer {
-  egoCar = null;
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera();
   controls: any = null;
@@ -46,6 +39,8 @@ class Renderer {
   dimensions = [0, 0];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   renderers: Record<string, any> = {};
+
+  egoCar: EgoCar | null = null;
 
   constructor() {
     this.renderers = {
@@ -58,43 +53,6 @@ class Renderer {
     };
   }
 
-  loadEgoCar() {
-    const loadEgoCar = abortWrapper(
-      loadDracoGLTFWithPromise(carModelWithDraco)
-    );
-    loadEgoCar.then((gltf) => {
-      const car = gltf.scene;
-      car.scale.set(0.1, 0.1, 0.1);
-      car.rotateX(Math.PI / 2);
-      car.rotateY(Math.PI);
-      this.scene.add(car);
-      const target1 = new THREE.Object3D();
-      target1.position.set(0.1, -0.2, 0.3);
-      const light1 = new THREE.SpotLight("#fff", 1.2, 3, Math.PI / 6, 0.1);
-      light1.position.set(0.1, 0.2, 0.3);
-      light1.castShadow = true;
-      light1.target = target1;
-      this.scene.add(target1);
-      this.scene.add(light1);
-      const target2 = new THREE.Object3D();
-      target2.position.set(-0.1, -0.2, 0.3);
-      const light2 = new THREE.SpotLight("#fff", 1.2, 2, Math.PI / 6, 0.1);
-      light2.position.set(-0.1, 0.2, 0.3);
-      light2.castShadow = true;
-      light2.target = target2;
-      this.scene.add(target2);
-      this.scene.add(light2);
-      // const light2 = new THREE.SpotLight("#fff", 1.6, 20, Math.PI / 6, 0.1);
-      // light2.position.set(0, -0.1, 0.2);
-      // light2.castShadow = true;
-      // this.scene.add(light2);
-      // 可能某个信号触发中断，直接调用abort
-      // setTimeout(() => {
-      // @ts-ignore
-      // loadEgoCar.abort();
-      // }, 10);
-    });
-  }
   initialize() {
     const container = document.getElementById("my-canvas")!;
     const width = container.offsetWidth,
@@ -133,7 +91,7 @@ class Renderer {
     const gridHelper = new THREE.GridHelper(50, 20);
     gridHelper.rotateX(Math.PI / 2);
     scene.add(gridHelper);
-    this.loadEgoCar();
+    this.egoCar = new EgoCar(scene);
     this.registerDefaultEvents();
     // this.switchCameraView(EViewType.Overlook);
     setTimeout(() => {
