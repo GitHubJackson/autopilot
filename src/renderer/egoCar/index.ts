@@ -34,12 +34,13 @@ export default class EgoCar {
   }
 
   async drawDynamicHalo() {
-    const egoCarHalo = await loadTexture(haloImg);
+    // const egoCarHalo = await loadTexture(haloImg);
     const geometry = new THREE.CircleGeometry(0.1, 32);
-    const material = new THREE.MeshBasicMaterial({
-      map: egoCarHalo,
-      transparent: true,
-    });
+    const material = getHaloShader({});
+    // const material = new THREE.MeshBasicMaterial({
+    //   map: egoCarHalo,
+    //   transparent: true,
+    // });
     const mesh = new THREE.Mesh(geometry, material);
     mesh.position.z = 0.05;
     this.scene.add(mesh);
@@ -79,4 +80,42 @@ export default class EgoCar {
     this.scene.add(target2);
     this.scene.add(light2);
   }
+}
+
+export function getHaloShader(option: {
+  // 最大半径
+  radius?: number;
+  // 初始透明度
+  opacity?: number;
+  // 颜色定义
+  color?: string;
+}) {
+  const material = new THREE.ShaderMaterial({
+    uniforms: {
+      radius: { value: option.radius ?? 1 },
+      opacity: { value: option.opacity ?? 0.5 },
+      color: {
+        value: option.color ?? new THREE.Color("#00ffff"),
+      },
+    },
+    vertexShader: `
+      varying vec2 vUv;  
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      } 
+    `,
+    fragmentShader: `
+      uniform vec3 color;
+      varying vec2 vUv;  
+      void main() {
+        float radius = length(vUv - 0.5); // uv坐标到中心的距离
+        float alpha = smoothstep(0.3, 0.5, radius);
+        gl_FragColor = vec4(color.rgb, alpha);
+      }
+    `,
+  });
+  material.transparent = true;
+  material.side = THREE.FrontSide;
+  return material;
 }
