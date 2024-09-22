@@ -35,30 +35,66 @@ export default class EgoCar {
 
   async drawDynamicHalo() {
     // const egoCarHalo = await loadTexture(haloImg);
-    const geometry = new THREE.CircleGeometry(0.1, 32);
-    const material = getHaloShader({});
+    const geometry = new THREE.CircleGeometry(0.05, 32);
+    const material = getHaloShaderWithAngle({});
     // const material = new THREE.MeshBasicMaterial({
     //   map: egoCarHalo,
     //   transparent: true,
     // });
     const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.z = 0.05;
+    const mesh2 = new THREE.Mesh(geometry.clone(), material.clone());
+    const mesh3 = new THREE.Mesh(geometry.clone(), material.clone());
+    mesh.position.z = 0.02;
+    mesh2.position.z = 0.02;
+    mesh3.position.z = 0.02;
     this.scene.add(mesh);
+    this.scene.add(mesh2);
+    this.scene.add(mesh3);
     const tweenScale = new Tween(mesh.scale)
-      .to({ x: 6, y: 6, z: 1 }, 1000)
-      .easing(Easing.Quadratic.In)
-      .start()
+      .to({ x: 12, y: 12, z: 1 }, 3000)
+      .start(500)
       .onStart(() => {
-        mesh.material.opacity = 1;
+        mesh.material.uniforms.opacity.value = 1;
       });
-    const tweenOpacity = new Tween(mesh.material).to({ opacity: 0.1 }, 300);
+    const tweenOpacity = new Tween(mesh.material.uniforms.opacity).to(
+      { value: 0.1 },
+      500
+    );
+    const tweenScale2 = new Tween(mesh2.scale)
+      .to({ x: 12, y: 12, z: 1 }, 3000)
+      .start(2000)
+      .onStart(() => {
+        mesh2.material.uniforms.opacity.value = 1;
+      });
+    const tweenOpacity2 = new Tween(mesh2.material.uniforms.opacity).to(
+      { value: 0.1 },
+      500
+    );
+    const tweenScale3 = new Tween(mesh3.scale)
+      .to({ x: 12, y: 12, z: 1 }, 3000)
+      .start(3000)
+      .onStart(() => {
+        mesh3.material.uniforms.opacity.value = 1;
+      });
+    const tweenOpacity3 = new Tween(mesh3.material.uniforms.opacity).to(
+      { value: 0.1 },
+      500
+    );
     // 衔接两种补间动画
     tweenScale.chain(tweenOpacity);
     tweenOpacity.chain(tweenScale);
+    tweenScale2.chain(tweenOpacity2);
+    tweenOpacity2.chain(tweenScale2);
+    tweenScale3.chain(tweenOpacity3);
+    tweenOpacity3.chain(tweenScale3);
     // 可以直接用定时器做更新
     setInterval(() => {
       tweenScale.update();
       tweenOpacity.update();
+      tweenScale2.update();
+      tweenOpacity2.update();
+      tweenScale3.update();
+      tweenOpacity3.update();
     }, 50);
   }
 
@@ -85,7 +121,6 @@ export default class EgoCar {
 export function getHaloShader(option: {
   // 最大半径
   radius?: number;
-  // 初始透明度
   opacity?: number;
   // 颜色定义
   color?: string;
@@ -93,7 +128,7 @@ export function getHaloShader(option: {
   const material = new THREE.ShaderMaterial({
     uniforms: {
       radius: { value: option.radius ?? 1 },
-      opacity: { value: option.opacity ?? 0.5 },
+      opacity: { value: option.opacity ?? 1.0 },
       color: {
         value: option.color ?? new THREE.Color("#00ffff"),
       },
@@ -107,15 +142,71 @@ export function getHaloShader(option: {
     `,
     fragmentShader: `
       uniform vec3 color;
+      uniform float opacity;
       varying vec2 vUv;  
       void main() {
         float radius = length(vUv - 0.5); // uv坐标到中心的距离
-        float alpha = smoothstep(0.3, 0.5, radius);
-        gl_FragColor = vec4(color.rgb, alpha);
+        float alpha = smoothstep(0.36, 0.5, radius) * opacity;
+        gl_FragColor = vec4(color, alpha);
       }
     `,
   });
   material.transparent = true;
   material.side = THREE.FrontSide;
+  return material;
+}
+
+export function getHaloShaderWithAngle(option: {
+  // 最大半径
+  radius?: number;
+  opacity?: number;
+  angle?: number;
+  // 颜色定义
+  color?: string;
+}) {
+  const material = new THREE.ShaderMaterial({
+    uniforms: {
+      radius: { value: option.radius ?? 1 },
+      opacity: { value: option.opacity ?? 1.0 },
+      angle: { value: option.angle ?? Math.PI / 2 },
+      color: {
+        value: option.color ?? new THREE.Color("#00ffff"),
+      },
+    },
+    vertexShader: `
+      varying vec2 vUv;  
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      } 
+    `,
+    fragmentShader: `
+      uniform vec3 color;
+      uniform float opacity;
+      varying vec2 vUv;  
+      void main() {
+        // 假设vUv.x的范围是0到1，我们需要将其映射到0到2π（或你想要的扇形角度范围）  
+        float startAngle = 0.0; // 扇形的起始角度（弧度）  
+        float endAngle = 3.14159 * 2.0; // 扇形的结束角度（弧度），这里是一个90度的扇形  
+        float angleRange = endAngle - startAngle;  
+          
+        // 将vUv.x从0-1映射到startAngle-endAngle  
+        float angle = startAngle + vUv.y * angleRange;  
+          
+        float radius = length(vUv - 0.5); // uv坐标到中心的距离
+        float alpha = smoothstep(0.36, 0.5, radius) * opacity;
+        // 检查当前角度是否在扇形范围内  
+        if (angle >= startAngle && angle <= endAngle) {  
+            gl_FragColor = vec4(color, alpha);
+        } else {  
+            gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0); // 在不支持discard的上下文中  
+        }
+
+      }
+    `,
+  });
+  material.transparent = true;
+  material.side = THREE.FrontSide;
+  material.depthWrite = false;
   return material;
 }

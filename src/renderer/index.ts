@@ -21,6 +21,7 @@ import Line from "./line";
 import { lineData1, lineData2, lineData3, lineData4 } from "../mock/line";
 import { EViewType } from "../types/renderer";
 import EgoCar from "./egoCar";
+import Robot from "./robot";
 
 const manager = new THREE.LoadingManager();
 manager.onLoad = () => {
@@ -41,6 +42,7 @@ class Renderer {
   renderers: Record<string, any> = {};
 
   egoCar: EgoCar | null = null;
+  robot: any = null;
 
   constructor() {
     this.renderers = {
@@ -92,6 +94,7 @@ class Renderer {
     gridHelper.rotateX(Math.PI / 2);
     scene.add(gridHelper);
     this.egoCar = new EgoCar(scene);
+    this.robot = new Robot(scene, renderer);
     this.registerDefaultEvents();
     // this.switchCameraView(EViewType.Overlook);
     setTimeout(() => {
