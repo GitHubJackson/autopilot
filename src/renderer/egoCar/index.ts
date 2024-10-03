@@ -9,8 +9,11 @@ import { Easing, Tween } from "@tweenjs/tween.js";
 
 export default class EgoCar {
   scene = new THREE.Scene();
+  group = new THREE.Group();
+
   constructor(scene: THREE.Scene) {
     this.scene = scene;
+    this.group.position.set(0, 0, 0);
     this.initialze();
   }
 
@@ -22,8 +25,9 @@ export default class EgoCar {
       const car = gltf.scene;
       car.scale.set(0.1, 0.1, 0.1);
       car.rotateX(Math.PI / 2);
-      car.rotateY(Math.PI);
-      this.scene.add(car);
+      car.rotateY(-Math.PI / 2);
+      this.group.add(car);
+      this.scene.add(this.group);
     });
   }
 
@@ -47,9 +51,9 @@ export default class EgoCar {
     mesh.position.z = 0.02;
     mesh2.position.z = 0.02;
     mesh3.position.z = 0.02;
-    this.scene.add(mesh);
-    this.scene.add(mesh2);
-    this.scene.add(mesh3);
+    this.group.add(mesh);
+    this.group.add(mesh2);
+    this.group.add(mesh3);
     const tweenScale = new Tween(mesh.scale)
       .to({ x: 12, y: 12, z: 1 }, 3000)
       .start(500)
@@ -100,21 +104,21 @@ export default class EgoCar {
 
   drawFrontLight() {
     const target1 = new THREE.Object3D();
-    target1.position.set(0.1, -0.2, 0.3);
-    const light1 = new THREE.SpotLight("#fff", 1.2, 3, Math.PI / 6, 0.1);
-    light1.position.set(0.1, 0.2, 0.3);
+    target1.position.set(0.2, 0.1, 0.3);
+    const light1 = new THREE.SpotLight("#fff", 1.2, 2, Math.PI / 6, 0.1);
+    light1.position.set(-0.2, 0.1, 0.3);
     light1.castShadow = true;
     light1.target = target1;
-    this.scene.add(target1);
-    this.scene.add(light1);
+    this.group.add(target1);
+    this.group.add(light1);
     const target2 = new THREE.Object3D();
-    target2.position.set(-0.1, -0.2, 0.3);
+    target2.position.set(0.2, -0.1, 0.3);
     const light2 = new THREE.SpotLight("#fff", 1.2, 2, Math.PI / 6, 0.1);
-    light2.position.set(-0.1, 0.2, 0.3);
+    light2.position.set(-0.2, -0.1, 0.3);
     light2.castShadow = true;
     light2.target = target2;
-    this.scene.add(target2);
-    this.scene.add(light2);
+    this.group.add(target2);
+    this.group.add(light2);
   }
 }
 

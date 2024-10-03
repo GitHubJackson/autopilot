@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+// @ts-ignore
+import { OrbitControls } from "../helper/three/OrbitControls.js";
 import Freespace from "./freespace";
 import {
   arrowData1,
@@ -22,6 +24,8 @@ import { lineData1, lineData2, lineData3, lineData4 } from "../mock/line";
 import { EViewType } from "../types/renderer";
 import EgoCar from "./egoCar";
 import Robot from "./robot";
+import { Easing, Tween } from "@tweenjs/tween.js";
+import * as TWEEN from "@tweenjs/tween.js";
 
 const manager = new THREE.LoadingManager();
 manager.onLoad = () => {
@@ -31,10 +35,15 @@ manager.onProgress = (url, loaded, total) => {
   console.log("===loading", url, loaded, total);
 };
 
+const fakeCameraDirection = new THREE.Vector3();
+const tweenGroup = new TWEEN.Group();
+
 class Renderer {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera();
-  controls: any = null;
+  fakeCamera = new THREE.PerspectiveCamera();
+  resetCamera = new THREE.PerspectiveCamera();
+  controls: OrbitControls | null = null;
   renderer = new THREE.WebGLRenderer();
   // 场景尺寸
   dimensions = [0, 0];
@@ -62,7 +71,7 @@ class Renderer {
     this.dimensions = [width, height];
     const camera = new THREE.PerspectiveCamera(45, width / height, 1, 1000);
     camera.up.set(0, 0, 1);
-    camera.position.set(-0.4, 4, 1.4);
+    camera.position.set(-4, -0.4, 1.4);
     this.camera = camera;
     const scene = this.scene;
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -70,9 +79,11 @@ class Renderer {
     this.renderer = renderer;
     // 设置背景色(颜色值，透明度)
     renderer.setClearColor(0x000000, 0.8);
-    renderer.setAnimationLoop(animate);
     container.appendChild(renderer.domElement);
-    const controls = new OrbitControls(camera, renderer.domElement);
+    const fakeCamera = camera.clone();
+    const controls = new OrbitControls(fakeCamera, renderer.domElement);
+    this.fakeCamera = fakeCamera;
+    this.resetCamera = this.fakeCamera.clone();
     this.controls = controls;
     // light
     const ambient = new THREE.AmbientLight(0xffffff, 0.8);
@@ -93,17 +104,106 @@ class Renderer {
     const gridHelper = new THREE.GridHelper(50, 20);
     gridHelper.rotateX(Math.PI / 2);
     scene.add(gridHelper);
-    this.egoCar = new EgoCar(scene);
+    const egoCar = new EgoCar(scene);
+    this.camera.lookAt(egoCar.group.position);
+    this.egoCar = egoCar;
     this.robot = new Robot(scene, renderer);
     this.registerDefaultEvents();
-    // this.switchCameraView(EViewType.Overlook);
+
+    // // 屏幕相机
+    // TODO 配合fakeCamera有点问题
+    // const camera2 = new THREE.PerspectiveCamera(45, width / height, 0.01, 1000);
+    // camera2.position.set(-10, -5, 4);
+    // // camera2.lookAt(0, 0, 0);
+    // camera2.up.set(0, 0, 1);
+    // // 观察原有相机
+    // const cameraHelper = new THREE.CameraHelper(camera);
+    // scene.add(cameraHelper);
+    // const controls = new OrbitControls(camera2, renderer.domElement);
+    // this.controls = controls;
+
     setTimeout(() => {
       this.mockData();
     }, 5000);
 
-    function animate() {
-      controls.update();
-      renderer.render(scene, camera);
+    const animate = () => {
+      this.updateCamera();
+      tweenGroup.update();
+      this.controls!.update();
+      this.renderer.render(scene, camera);
+    };
+    renderer.setAnimationLoop(animate);
+  }
+
+  updateCamera = () => {
+    if (this.egoCar) {
+      const position = this.egoCar.group.position;
+      const rotation = this.egoCar.group.rotation;
+      // 将 fakeCamera 的属性同步给 camera
+      this.camera.copy(this.fakeCamera);
+      const x = this.fakeCamera.position.x;
+      const y = this.fakeCamera.position.y;
+      // 相机和自车保持一个固定的偏移
+      // camera.position.x = position.x + x;
+      // camera.position.y = position.y + y;
+      this.fakeCamera.getWorldDirection(fakeCameraDirection);
+      const directionTheta = Math.atan2(
+        fakeCameraDirection.y,
+        fakeCameraDirection.x
+      );
+      const camera2egocarDistance = Math.sqrt(x * x + y * y);
+      this.camera.position.x =
+        position.x -
+        camera2egocarDistance * Math.cos(rotation.z + directionTheta);
+      this.camera.position.y =
+        position.y -
+        camera2egocarDistance * Math.sin(rotation.z + directionTheta);
+      this.camera.lookAt(position.x, position.y, position.z);
+    }
+  };
+
+  runEgoCar() {
+    if (this.egoCar) {
+      const animate2 = new Tween(this.egoCar.group.position)
+        .to(
+          {
+            y: -0.5,
+          },
+          2000
+        )
+        .start();
+      const animate = new Tween(this.egoCar.group.position)
+        .delay(500)
+        .to(
+          {
+            x: 10,
+          },
+          5000
+        )
+        .easing(Easing.Quadratic.In)
+        .start();
+      const rotationAnimate = new Tween(this.egoCar.group.rotation)
+        .to(
+          {
+            z: -Math.PI / 4,
+          },
+          1200
+        )
+        // .easing(Easing.Quadratic.InOut)
+        .start()
+        .onComplete(() => {
+          const rotationAnimate2 = new Tween(this.egoCar!.group.rotation)
+            .to(
+              {
+                z: 0,
+              },
+              1600
+            )
+            // .easing(Easing.Quadratic.InOut)
+            .start();
+          tweenGroup.add(rotationAnimate2);
+        });
+      tweenGroup.add(animate, animate2, rotationAnimate);
     }
   }
 
@@ -120,6 +220,7 @@ class Renderer {
     this.renderers.line().draw(lineData2);
     this.renderers.line().draw(lineData3);
     // this.renderers.line().draw(lineData4);
+    this.runEgoCar();
   }
 
   registerDefaultEvents() {
@@ -137,25 +238,31 @@ class Renderer {
     this.renderer.setSize(width, height);
   }
 
+  resetFakeCamera = () => {
+    this.fakeCamera.copy(this.resetCamera);
+    this.controls!.reset();
+  };
+
   cameraView = EViewType.FollowCar;
-  switchCameraView(view: EViewType) {
+  switchCameraView(view = EViewType.FollowCar) {
+    // TODO 切换时有一个闪屏
     this.cameraView = view;
     switch (view) {
       case EViewType.FollowCar: {
-        // 确保平滑过渡
-        // this.controls.enabled = false;
-        this.camera.up.set(0, 0, 1);
-        this.camera.position.set(-0.4, 4, 1.4);
+        this.resetFakeCamera();
+        this.fakeCamera.position.set(-4, -0.4, 1.4);
         break;
       }
       case EViewType.Overlook: {
-        this.camera.position.set(0, 0, 20);
-        this.camera.up.set(0, -1, 0);
+        this.resetFakeCamera();
+        this.fakeCamera.position.set(0, 0, 20);
         break;
       }
       case EViewType.OverlookVertical: {
-        this.camera.position.set(0, 0, 20);
-        this.camera.up.set(1, 0, 0);
+        this.resetFakeCamera();
+        this.fakeCamera.position.set(0, 0, 20);
+        // this.fakeCamera.rotation.x = -Math.PI / 2;
+        this.controls.rotate(Math.PI / 2);
         break;
       }
       default:

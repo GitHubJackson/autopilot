@@ -4,16 +4,16 @@ export const lineData1: ILine = {
   width: 0.02,
   type: ELineType.Solid,
   points: [
-    [0.4, -20, 0],
-    [0.4, 20, 0],
+    [-20, 0.4, 0],
+    [20, 0.4, 0],
   ],
 };
 export const lineData2: ILine = {
   width: 0.02,
   type: ELineType.Solid,
   points: [
-    [-0.8, -20, 0],
-    [-0.8, 20, 0],
+    [-20, -0.8, 0],
+    [20, -0.8, 0],
   ],
 };
 
@@ -21,11 +21,11 @@ export const lineData3: ILine = {
   width: 0.02,
   type: ELineType.Dash,
   points: [
-    [-0.2, -20, 0],
-    [-0.2, -10, 0],
-    [-0.2, 0, 0],
-    [-0.2, 10, 0],
-    [-0.2, 20, 0],
+    [-20, -0.2, 0],
+    [-10, -0.2, 0],
+    [0, -0.2, 0],
+    [10, -0.2, 0],
+    [20, -0.2, 0],
   ],
 };
 

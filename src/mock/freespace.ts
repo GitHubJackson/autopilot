@@ -11,10 +11,10 @@ export const freespaceData1: IFreespace = {
     z: 0,
   },
   contour: [
-    { x: -1, y: -30, z: 0 },
-    { x: -1, y: 10, z: 0 },
-    { x: 0.6, y: 10, z: 0 },
-    { x: 0.6, y: -30, z: 0 },
+    { x: -30, y: -1, z: 0 },
+    { x: 30, y: -1, z: 0 },
+    { x: 30, y: 0.6, z: 0 },
+    { x: -30, y: 0.6, z: 0 },
   ],
   // 洞可能有多个，所以这里应该设置成二维数组
   // holes: [
@@ -40,10 +40,10 @@ export const freespaceData2: IFreespace = {
     z: 0,
   },
   contour: [
-    { x: 10, y: -3, z: 0 },
-    { x: 10, y: -1, z: 0 },
-    { x: -10, y: -1, z: 0 },
-    { x: -10, y: -3, z: 0 },
+    { x: 3, y: 10, z: 0 },
+    { x: 1, y: 10, z: 0 },
+    { x: 1, y: -10, z: 0 },
+    { x: 3, y: -10, z: 0 },
   ],
   color: {
     r: 58,
