@@ -2,3 +2,17 @@
   width: 100vw;
   height: 100vh;
 }
+
+/* 悬浮文本框 */
+.label-box {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 4px;
+  color: #fff;
+  font-size: 12px;
+  border-radius: 2px;
+  line-height: 20px;
+  background-color: rgba(0, 0, 0, 0.6);
+}

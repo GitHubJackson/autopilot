@@ -7,14 +7,86 @@ import { abortWrapper } from "../../helper/promise";
 import { loadDracoGLTFWithPromise, loadTexture } from "../../helper";
 import { Easing, Tween } from "@tweenjs/tween.js";
 
+const egoCarLabelString = "egoCar-label";
+
 export default class EgoCar {
   scene = new THREE.Scene();
+  camera = new THREE.Camera();
   group = new THREE.Group();
+  car = new THREE.Group();
+  container: HTMLCanvasElement | null = null;
+  showLabel = false;
+  carData = {
+    name: "egoCar",
+    velocity: {
+      x: 10,
+      y: 20,
+    },
+  };
 
-  constructor(scene: THREE.Scene) {
+  constructor(scene: THREE.Scene, camera: THREE.Camera) {
     this.scene = scene;
+    this.camera = camera;
     this.group.position.set(0, 0, 0);
     this.initialze();
+    this.clickObject = this.clickObject.bind(this);
+    this.triggerLabelBox = this.triggerLabelBox.bind(this);
+    this.updateLabelBox = this.updateLabelBox.bind(this);
+    // @ts-ignore
+    window.canvasRef.container.addEventListener("click", this.clickObject);
+    // @ts-ignore
+    this.container = window.canvasRef.container;
+  }
+
+  clickObject(e: any) {
+    // @ts-ignore
+    const canvasRef = window.canvasRef;
+    const mouseVector = new THREE.Vector2();
+    const raycaster = new THREE.Raycaster();
+    mouseVector.x = (e.offsetX / canvasRef.width) * 2 - 1;
+    mouseVector.y = -(e.offsetY / canvasRef.height) * 2 + 1;
+    raycaster.setFromCamera(mouseVector, this.camera);
+    // @ts-ignore
+    const intersects = raycaster.intersectObjects(this.car.children, true);
+    if (intersects.length > 0) {
+      this.triggerLabelBox();
+    }
+  }
+
+  triggerLabelBox() {
+    const canvasContainer = this.container!;
+    const dom = document.getElementById(egoCarLabelString);
+    if (!dom) {
+      const newBox = document.createElement("div");
+      newBox.setAttribute("id", egoCarLabelString);
+      newBox.setAttribute("class", "label-box");
+      canvasContainer.appendChild(newBox);
+      this.updateLabelBox(newBox);
+      this.showLabel = true;
+    } else {
+      if (this.showLabel) {
+        dom.style.display = "block";
+        this.updateLabelBox(dom);
+      } else {
+        dom.style.display = "none";
+      }
+    }
+  }
+
+  updateLabelBox(dom: HTMLElement) {
+    // @ts-ignore
+    const canvasRef = window.canvasRef;
+    const x = this.group.position.x;
+    const y = this.group.position.y;
+    const groupVector = new THREE.Vector3(x, y, 0.1);
+    // 将世界坐标转为标准设备坐标
+    groupVector.project(this.camera);
+    const w = canvasRef.width / 2;
+    const h = canvasRef.height / 2;
+    const screenX = Math.round(groupVector.x * w + w);
+    const screenY = Math.round(-groupVector.y * h + h);
+    dom.innerText = `${this.carData.name}\nvx:${this.carData.velocity.x} vy:${this.carData.velocity.y}`;
+    dom.style.transform = `translate(${screenX}px,${screenY}px)`;
   }
 
   loadEgoCar() {
@@ -26,6 +98,7 @@ export default class EgoCar {
       car.scale.set(0.1, 0.1, 0.1);
       car.rotateX(Math.PI / 2);
       car.rotateY(-Math.PI / 2);
+      this.car = car;
       this.group.add(car);
       this.scene.add(this.group);
     });

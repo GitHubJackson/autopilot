@@ -68,6 +68,12 @@ class Renderer {
     const container = document.getElementById("my-canvas")!;
     const width = container.offsetWidth,
       height = container.offsetHeight;
+    // @ts-ignore
+    window.canvasRef = {
+      container,
+      width,
+      height,
+    };
     this.dimensions = [width, height];
     const camera = new THREE.PerspectiveCamera(45, width / height, 1, 1000);
     camera.up.set(0, 0, 1);
@@ -104,7 +110,7 @@ class Renderer {
     const gridHelper = new THREE.GridHelper(50, 20);
     gridHelper.rotateX(Math.PI / 2);
     scene.add(gridHelper);
-    const egoCar = new EgoCar(scene);
+    const egoCar = new EgoCar(scene, camera);
     this.camera.lookAt(egoCar.group.position);
     this.egoCar = egoCar;
     this.robot = new Robot(scene, renderer);
@@ -233,6 +239,10 @@ class Renderer {
     const container = document.getElementById("my-canvas")!;
     const width = container.offsetWidth,
       height = container.offsetHeight;
+    // @ts-ignore
+    window.canvasRef.width = width;
+    // @ts-ignore
+    window.canvasRef.height = height;
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
