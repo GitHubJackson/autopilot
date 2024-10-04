@@ -27,6 +27,7 @@ class Cube {
     const mesh = new THREE.Mesh(geometry, material);
     mesh.position.set(position.x, position.y, position.z ?? 0);
     mesh.rotateX(Math.PI / 2);
+    mesh.rotateY(Math.PI / 2);
     group.add(mesh);
     const edges = new THREE.EdgesGeometry(geometry);
     const edgesMaterial = new THREE.LineBasicMaterial();
@@ -35,50 +36,50 @@ class Cube {
     line.position.copy(mesh.position);
     line.rotation.copy(mesh.rotation);
     group.add(line);
-
-    // // 绘制顶部文字
-    // const text = id + "-" + type;
-    // if (this.textCache[text]) {
-    //   const textMesh = this.textCache[text];
-    //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //   // @ts-ignore
-    //   mesh.textMesh = textMesh;
-    //   group.add(textMesh);
-    // } else {
-    //   const textMesh = renderTextMesh({
-    //     id: text,
-    //     content: text,
-    //     position: {
-    //       x: mesh.position.x + width,
-    //       y: mesh.position.y + height / 2 + 0.1,
-    //       z: mesh.position.z,
-    //     },
-    //   });
-    //   // 挂载到他车Mesh上
-    //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //   // @ts-ignore
-    //   mesh.textMesh = textMesh;
-    //   group.add(textMesh);
-    // }
-    // // 绘制朝向箭头
-    // const arrowMesh = drawArrow({
-    //   id: data.id + "-" + "arrow",
-    //   endPoint: {
-    //     x: mesh.position.x,
-    //     y: mesh.position.y,
-    //     z: mesh.position.z - length,
-    //   },
-    //   origin: {
-    //     x: mesh.position.x,
-    //     y: mesh.position.y,
-    //     z: mesh.position.z,
-    //   },
-    // });
+    // 绘制顶部文字
+    const text = id + "-" + type;
+    if (this.textCache[text]) {
+      const textMesh = this.textCache[text];
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      mesh.textMesh = textMesh;
+      group.add(textMesh);
+    } else {
+      const textMesh = renderTextMesh({
+        id: text,
+        content: text,
+        position: {
+          x: mesh.position.x,
+          y: mesh.position.y + width / 2,
+          z: mesh.position.z + height / 2 + 0.03,
+        },
+      });
+      // 挂载到他车Mesh上
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      mesh.textMesh = textMesh;
+      group.add(textMesh);
+    }
+    // 绘制朝向箭头
+    const arrowMesh = drawArrow({
+      id: data.id + "-" + "arrow",
+      endPoint: {
+        x: mesh.position.x + length * 1.5,
+        y: mesh.position.y,
+        z: mesh.position.z,
+      },
+      origin: {
+        x: mesh.position.x,
+        y: mesh.position.y,
+        z: mesh.position.z,
+      },
+    });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    // mesh.arrowMesh = arrowMesh;
-    // group.add(arrowMesh);
+    mesh.arrowMesh = arrowMesh;
+    group.add(arrowMesh);
     this.scene.add(group);
+    return group;
     // MOCK
     // const group2 = group.clone();
     // group2.scale.set(0.5, 0.5, 0.5);

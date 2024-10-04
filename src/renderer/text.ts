@@ -11,7 +11,7 @@ fontLoader.load("gentilis_regular.typeface.json", (res) => {
 });
 
 export function renderTextMesh(data: IText) {
-  const { content, color = { r: 1, g: 1, b: 1 }, position, size = 0.1 } = data;
+  const { content, color = { r: 1, g: 1, b: 0 }, position, size = 0.06 } = data;
   const textGeo = new TextGeometry(content, {
     font,
     size,
@@ -21,11 +21,11 @@ export function renderTextMesh(data: IText) {
   const material = new THREE.MeshPhongMaterial();
   material.color.setRGB(color.r, color.g, color.b);
   const centerOffset =
-    -position.x * (textGeo.boundingBox!.max.x - textGeo.boundingBox!.min.x);
+    -position.y * (textGeo.boundingBox!.max.y - textGeo.boundingBox!.min.y);
   const textMesh = new THREE.Mesh(textGeo, material);
-  textMesh.position.set(centerOffset, position.y, position.z || 0);
-  textMesh.rotation.x = 0;
-  textMesh.rotation.y = Math.PI * 2;
+  textMesh.position.set(position.x, position.y, position.z || 0);
+  textMesh.rotateX(Math.PI / 2);
+  textMesh.rotateY(-Math.PI / 2);
   return textMesh;
 }
 

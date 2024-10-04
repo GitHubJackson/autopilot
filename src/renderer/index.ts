@@ -8,6 +8,9 @@ import Freespace from "./freespace";
 import {
   arrowData1,
   cubeData1,
+  cubeData2,
+  cubeData3,
+  cubeData4,
   freespaceData1,
   freespaceData2,
   polygonCylinderData1,
@@ -213,10 +216,59 @@ class Renderer {
     }
   }
 
+  runOtherCar() {
+    if (this.otherCar2) {
+      const animate = new Tween(this.otherCar2.position)
+        .delay(2000)
+        .easing(Easing.Quadratic.InOut)
+        .to(
+          {
+            x: 10,
+          },
+          5000
+        )
+        .start();
+      tweenGroup.add(animate);
+    }
+    if (this.otherCar3) {
+      const animate2 = new Tween(this.otherCar3.position)
+        .delay(1500)
+        .easing(Easing.Quadratic.InOut)
+        .to(
+          {
+            x: 9.4,
+          },
+          6000
+        )
+        .start();
+      tweenGroup.add(animate2);
+    }
+    if (this.otherCar4) {
+      const animate3 = new Tween(this.otherCar4.position)
+        .delay(800)
+        .easing(Easing.Quadratic.InOut)
+        .to(
+          {
+            x: 11,
+          },
+          6000
+        )
+        .start();
+      tweenGroup.add(animate3);
+    }
+  }
+
+  otherCar2: THREE.Mesh | null = null;
+  otherCar3: THREE.Mesh | null = null;
+  otherCar4: THREE.Mesh | null = null;
   mockData() {
     this.renderers.freespace().draw(freespaceData1);
     this.renderers.freespace().draw(freespaceData2);
     this.renderers.cube().draw(cubeData1);
+    this.otherCar2 = this.renderers.cube().draw(cubeData2);
+    this.otherCar3 = this.renderers.cube().draw(cubeData3);
+    this.otherCar4 = this.renderers.cube().draw(cubeData4);
+    // this.renderers.cube().draw(cubeData4);
     // this.renderers.arrow().draw(arrowData1);
     // this.renderers.polygonCylinder().draw(polygonCylinderData1);
     // this.renderers.polygonCylinder().draw(polygonCylinderData2);
@@ -227,6 +279,7 @@ class Renderer {
     this.renderers.line().draw(lineData3);
     // this.renderers.line().draw(lineData4);
     this.runEgoCar();
+    this.runOtherCar();
   }
 
   registerDefaultEvents() {

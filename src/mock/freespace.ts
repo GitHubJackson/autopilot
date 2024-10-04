@@ -56,9 +56,9 @@ export const cubeData1: ICube = {
   id: "cube1",
   type: "BUS",
   position: {
-    x: -1,
-    y: -2,
-    z: 0.21,
+    x: 1.3,
+    y: 0.2,
+    z: 0.18,
   },
   color: {
     r: 0,
@@ -66,8 +66,62 @@ export const cubeData1: ICube = {
     b: 0,
   },
   width: 0.4,
-  height: 0.4,
+  height: 0.3,
   length: 1,
+};
+
+export const cubeData2: ICube = {
+  id: "cube2",
+  type: "CAR",
+  position: {
+    x: 2.3,
+    y: 0.2,
+    z: 0.12,
+  },
+  color: {
+    r: 0,
+    g: 1,
+    b: 0,
+  },
+  width: 0.24,
+  height: 0.15,
+  length: 0.6,
+};
+
+export const cubeData3: ICube = {
+  id: "cube3",
+  type: "CAR",
+  position: {
+    x: -1,
+    y: -0.4,
+    z: 0.12,
+  },
+  color: {
+    r: 0,
+    g: 1,
+    b: 0,
+  },
+  width: 0.24,
+  height: 0.12,
+  length: 0.5,
+};
+
+export const cubeData4: ICube = {
+  id: "cube4",
+  type: "CAR",
+  position: {
+    x: 1,
+    y: -0.5,
+    z: 0.12,
+  },
+  color: {
+    r: 0,
+    g: 1,
+    b: 0,
+  },
+  width: 0.24,
+  height: 0.16,
+  length: 0.4,
 };
 
 export const textData1 = {

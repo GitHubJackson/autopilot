@@ -45,7 +45,7 @@ export default class Robot {
       mixer1.clipAction(clips[0]).play(); // idle
       mixer2.clipAction(clips[1]).play(); // run
       mixer3.clipAction(clips[3]).play(); // walk
-      this.scene.add(model1, model2, model3);
+      this.scene.add(model3, model2);
       this.mixers.push(mixer1, mixer2, mixer3);
       setInterval(() => {
         animate();
