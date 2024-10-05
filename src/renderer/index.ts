@@ -59,7 +59,7 @@ class Renderer {
   constructor() {
     this.renderers = {
       freespace: () => new Freespace(this.scene),
-      cube: () => new Cube(this.scene),
+      cube: () => new Cube(this.scene, this.camera),
       text: () => new Text(this.scene),
       arrow: () => new Arrow(this.scene),
       polygonCylinder: () => new PolygonCylinder(this.scene),
@@ -249,7 +249,7 @@ class Renderer {
         .easing(Easing.Quadratic.InOut)
         .to(
           {
-            x: 11,
+            x: 12,
           },
           6000
         )
@@ -264,10 +264,12 @@ class Renderer {
   mockData() {
     this.renderers.freespace().draw(freespaceData1);
     this.renderers.freespace().draw(freespaceData2);
-    this.renderers.cube().draw(cubeData1);
-    this.otherCar2 = this.renderers.cube().draw(cubeData2);
-    this.otherCar3 = this.renderers.cube().draw(cubeData3);
-    this.otherCar4 = this.renderers.cube().draw(cubeData4);
+    const otherCars = this.renderers
+      .cube()
+      .draw([cubeData1, cubeData2, cubeData3, cubeData4]);
+    this.otherCar2 = otherCars[1];
+    this.otherCar3 = otherCars[2];
+    this.otherCar4 = otherCars[3];
     // this.renderers.cube().draw(cubeData4);
     // this.renderers.arrow().draw(arrowData1);
     // this.renderers.polygonCylinder().draw(polygonCylinderData1);

@@ -64,11 +64,13 @@ export default class EgoCar {
       this.updateLabelBox(newBox);
       this.showLabel = true;
     } else {
-      if (this.showLabel) {
+      if (!this.showLabel) {
         dom.style.display = "block";
         this.updateLabelBox(dom);
+        this.showLabel = true;
       } else {
         dom.style.display = "none";
+        this.showLabel = false;
       }
     }
   }

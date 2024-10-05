@@ -9,10 +9,9 @@
   position: absolute;
   top: 0;
   left: 0;
-  padding: 4px;
+  padding: 2px;
   color: #fff;
-  font-size: 12px;
+  font-size: 10px;
   border-radius: 2px;
-  line-height: 20px;
   background-color: rgba(0, 0, 0, 0.6);
 }

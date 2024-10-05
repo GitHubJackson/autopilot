@@ -27,6 +27,7 @@ export default class Robot {
       robot.scale.set(0.15, 0.15, 0.15);
       robot.position.set(0.5, -0.5, 0.02);
       robot.rotateX(Math.PI / 2);
+      robot.rotateY(Math.PI / 2);
       const clips = gltf.animations;
       robot.traverse(function (object) {
         // @ts-ignore
