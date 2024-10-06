@@ -18,7 +18,7 @@ export function renderTextMesh(data: IText) {
     depth: 0.01,
   });
   textGeo.computeBoundingBox();
-  const material = new THREE.MeshPhongMaterial();
+  const material = new THREE.MeshBasicMaterial();
   material.color.setRGB(color.r, color.g, color.b);
   const centerOffset =
     -position.y * (textGeo.boundingBox!.max.y - textGeo.boundingBox!.min.y);
