@@ -1,0 +1,42 @@
+.scene-editor-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  height: 48px;
+  color: #fff;
+  background-color: #333;
+  gap: 64px;
+  z-index: 9;
+  box-sizing: border-box;
+  border-bottom: 1px solid #444;
+}
+.scene-editor-header .title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.scene-editor-header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #fff;
+}
+
+.scene-editor-header-right .ant-radio-wrapper {
+  color: #fff;
+}
+
+.scene-editor-header-right .btns {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.scene-editor-header .ant-btn-default:disabled {
+  color: #ccc;
+}

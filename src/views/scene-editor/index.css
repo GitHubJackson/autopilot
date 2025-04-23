@@ -1,0 +1,14 @@
+.scene-editor {
+  height: 100vh;
+  width: 100vw;
+  background-color: #000;
+}
+
+.scene-editor-canvas {
+  position: absolute;
+  top: 48px;
+  left: 0;
+  width: calc(100vw - 300px);
+  height: calc(100vh - 48px);
+  z-index: 9;
+}

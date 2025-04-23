@@ -38,10 +38,14 @@ class Freespace {
     const shapeGeometry = new THREE.ShapeGeometry(shape);
     const material = new THREE.MeshPhongMaterial();
     // setRGB传参颜色值需要介于0-1之间
-    material.color.setRGB(color.r / 255, color.g / 255, color.b / 255);
+    material.color.setRGB(
+      (color?.r || 58) / 255,
+      (color?.g || 58) / 255,
+      (color?.b || 58) / 255
+    );
     material.opacity = color.a || 1;
     const mesh = new THREE.Mesh(shapeGeometry, material);
-    mesh.position.set(position.x, position.y, position.z || 0);
+    mesh.position.set(position?.x || 0, position?.y || 0, position?.z || 0);
     // mesh.rotateX(-Math.PI / 2);
     this.scene.add(mesh);
   }
@@ -52,7 +56,7 @@ export default Freespace;
 export interface IFreespace {
   // 一般可以用于判断元素是否可复用
   id: string;
-  position: IPos;
+  position?: IPos;
   contour: IPos[];
   // 洞可能有多个，所以这里应该设置成二维数组
   holes?: IPos[][];

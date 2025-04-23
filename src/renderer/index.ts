@@ -29,6 +29,7 @@ import EgoCar from "./egoCar";
 import Robot from "./robot";
 import { Easing, Tween } from "@tweenjs/tween.js";
 import * as TWEEN from "@tweenjs/tween.js";
+import { ISceneData } from "../views/scene-editor/store/type.js";
 
 const manager = new THREE.LoadingManager();
 manager.onLoad = () => {
@@ -54,6 +55,7 @@ class Renderer {
   renderers: Record<string, any> = {};
 
   egoCar: EgoCar | null = null;
+  vehicles: any[] = [];
   robot: any = null;
 
   constructor() {
@@ -131,18 +133,80 @@ class Renderer {
     // const controls = new OrbitControls(camera2, renderer.domElement);
     // this.controls = controls;
 
-    setTimeout(() => {
-      this.mockData();
-    }, 5000);
+    // setTimeout(() => {
+    //   this.mockData();
+    // }, 5000);
 
-    const animate = () => {
-      this.updateCamera();
-      tweenGroup.update();
-      this.controls!.update();
-      this.renderer.render(scene, camera);
-    };
-    renderer.setAnimationLoop(animate);
+    renderer.setAnimationLoop(this.animate);
   }
+
+  // TODO 辅助自车模拟行驶
+  startAutoDrive = false;
+  totalDuration = 0;
+  pathPoints: any[] = [];
+  startTime = 0;
+  currentIndex = 0;
+  mockAutoDrive() {
+    if (!this.startTime) this.startTime = performance.now();
+    const elapsed = performance.now() - this.startTime;
+    const progress = Math.min(elapsed / this.totalDuration, 1);
+    // 计算当前点索引
+    this.currentIndex = Math.floor(progress * (this.pathPoints.length - 1));
+    if (this.currentIndex < this.pathPoints.length - 1) {
+      const currentPoint = this.pathPoints[this.currentIndex];
+      const nextPoint = this.pathPoints[this.currentIndex + 1];
+      // console.log("===currentPoint", currentPoint);
+      // TODO 坐标没对齐
+      this.egoCar!.group.position.set(currentPoint.x, -currentPoint.y, 0);
+      // this.egoCar!.group.position.copy(currentPoint);
+      // // 更新位置
+      // const newPos = new THREE.Vector3();
+      // newPos.x = currentPoint.x;
+      // newPos.y = currentPoint.y;
+      // this.egoCar!.group.position.copy(newPos);
+      // 计算朝向
+      const dx = nextPoint.x - currentPoint.x;
+      const dy = nextPoint.y - currentPoint.y;
+      this.egoCar!.group.rotation.z = -Math.PI / 2 + Math.atan2(dx, dy);
+    }
+  }
+  mockVehiclesDrive() {
+    this.vehicles.forEach((vehicle) => {
+      if (!vehicle?.pathPoints || vehicle.pathPoints.length === 0) {
+        return;
+      }
+      if (!vehicle.startTime) vehicle.startTime = performance.now();
+      const elapsed = performance.now() - vehicle.startTime;
+      const progress = Math.min(elapsed / vehicle.totalDuration, 1);
+      vehicle.currentIndex = Math.floor(
+        progress * (vehicle.pathPoints.length - 1)
+      );
+      if (vehicle.currentIndex < vehicle.pathPoints.length - 1) {
+        const currentPoint = vehicle.pathPoints[vehicle.currentIndex];
+        const nextPoint = vehicle.pathPoints[vehicle.currentIndex + 1];
+        vehicle.position.set(
+          currentPoint.x,
+          -currentPoint.y,
+          vehicle.position.z
+        );
+        // 计算朝向
+        const dx = nextPoint.x - currentPoint.x;
+        const dy = nextPoint.y - currentPoint.y;
+        vehicle.rotation.z = -Math.PI / 2 + Math.atan2(dx, dy);
+      }
+    });
+  }
+
+  animate = () => {
+    this.updateCamera();
+    // tweenGroup.update();
+    this.controls!.update();
+    if (this.startAutoDrive) {
+      this.mockAutoDrive();
+      this.mockVehiclesDrive();
+    }
+    this.renderer.render(this.scene, this.camera);
+  };
 
   updateCamera = () => {
     if (this.egoCar) {
@@ -282,6 +346,62 @@ class Renderer {
     // this.renderers.line().draw(lineData4);
     this.runEgoCar();
     this.runOtherCar();
+  }
+  loadSceneData(data: ISceneData) {
+    const { autoCar, map, scene } = data;
+    const { path, speed } = autoCar;
+    const { lines, lanes } = map;
+    const { vehicles } = scene;
+    // 这里按1/100比例换算下单位
+    lines.forEach((line) => {
+      line.points = line.points.map((point) => {
+        return [point[0] / 50, point[1] / 50, 0];
+      });
+      line.width = line.width / 50;
+      line.color = "yellow";
+      this.renderers.line().draw(line);
+    });
+    lanes.forEach((lane) => {
+      lane.contour = lane.contour.map((point) => {
+        return { x: point.x / 50, y: point.y / 50, z: 0 };
+      });
+      this.renderers.freespace().draw(lane);
+    });
+    vehicles.forEach((vehicle) => {
+      vehicle.position = {
+        x: vehicle.position.x / 50,
+        y: vehicle.position.y / 50,
+        z: vehicle.position.z / 50 + 0.2,
+      };
+      vehicle.width = vehicle.width / 50;
+      vehicle.height = 0.2;
+      vehicle.length = vehicle.length / 50;
+      const vehicleEle = this.renderers.cube().draw([vehicle])[0];
+      this.vehicles.push(vehicleEle);
+      // 模拟行驶
+      if (vehicle.path.length > 0) {
+        const curve = new THREE.CatmullRomCurve3(
+          vehicle.path.map((p) => new THREE.Vector3(p[0] / 50, -p[1] / 50, 0)),
+          false // 闭合路径
+        );
+        const totalLength = curve.getLength();
+        vehicleEle.totalDuration = (totalLength / vehicle.speed) * 1000;
+        vehicleEle.pathPoints = curve.getPoints(5000);
+      }
+    });
+    // TODO 模拟行驶
+    if (path.length > 0) {
+      const curve = new THREE.CatmullRomCurve3(
+        path.map((p) => new THREE.Vector3(p[0] / 50, -p[1] / 50, 0)),
+        false // 闭合路径
+      );
+      const totalLength = curve.getLength();
+      this.totalDuration = (totalLength / speed) * 1000; // 总时长（毫秒）
+      this.pathPoints = curve.getPoints(5000); // 拆分为1000个点
+      setTimeout(() => {
+        this.startAutoDrive = true;
+      }, 2000);
+    }
   }
 
   registerDefaultEvents() {

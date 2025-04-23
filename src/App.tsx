@@ -1,18 +1,16 @@
-import { useEffect } from "react";
-import { myRenderer } from "./renderer";
-import "./App.css";
-import { Overlay } from "./components/overlay";
+import * as React from "react";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import Autopilot from "./views/autopilot";
+import SceneEditor from "./views/scene-editor";
 
 function App() {
-  useEffect(() => {
-    myRenderer.initialize();
-  }, []);
-
   return (
-    <>
-      <div id="my-canvas"></div>
-      <Overlay />
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Autopilot />}></Route>
+        <Route path="/editor" element={<SceneEditor />}></Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

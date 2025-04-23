@@ -68,6 +68,6 @@ export default class Robot {
   }
 
   async initialze() {
-    await this.loadRobotModel();
+    // await this.loadRobotModel();
   }
 }

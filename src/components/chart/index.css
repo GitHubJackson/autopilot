@@ -1,0 +1,10 @@
+.chart-container {
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  z-index: 10;
+  width: 400px;
+  height: 240px;
+  background: #ccc;
+  border-radius: 4px;
+}

@@ -45,29 +45,29 @@ class Cube {
       line.rotation.copy(mesh.rotation);
       group.add(line);
       // 绘制顶部文字
-      const text = id + "-" + type;
-      if (this.textCache[text]) {
-        const textMesh = this.textCache[text];
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        mesh.textMesh = textMesh;
-        group.add(textMesh);
-      } else {
-        const textMesh = renderTextMesh({
-          id: text,
-          content: text,
-          position: {
-            x: mesh.position.x,
-            y: mesh.position.y + width / 2,
-            z: mesh.position.z + height / 2 + 0.03,
-          },
-        });
-        // 挂载到他车Mesh上
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        mesh.textMesh = textMesh;
-        group.add(textMesh);
-      }
+      // const text = id + "-" + type;
+      // if (this.textCache[text]) {
+      //   const textMesh = this.textCache[text];
+      //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //   // @ts-ignore
+      //   mesh.textMesh = textMesh;
+      //   group.add(textMesh);
+      // } else {
+      //   const textMesh = renderTextMesh({
+      //     id: text,
+      //     content: text,
+      //     position: {
+      //       x: mesh.position.x,
+      //       y: mesh.position.y + width / 2,
+      //       z: mesh.position.z + height / 2 + 0.03,
+      //     },
+      //   });
+      //   // 挂载到他车Mesh上
+      //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //   // @ts-ignore
+      //   mesh.textMesh = textMesh;
+      //   group.add(textMesh);
+      // }
       // 绘制朝向箭头
       const arrowMesh = drawArrow({
         id: data.id + "-" + "arrow",
@@ -139,7 +139,7 @@ class Cube {
         const h = canvasRef.height / 2;
         const screenX = Math.round(vector.x * w + w);
         const screenY = Math.round(-vector.y * h + h);
-        dom.innerText = `${cube.userData.id}-${cube.userData.type}\nsize:[1.3,2.4,1.2]`;
+        dom.innerText = `${cube.userData.id}-${cube.userData.type}`;
         dom.style.transform = `translate(${screenX}px,${screenY}px)`;
       }
     });

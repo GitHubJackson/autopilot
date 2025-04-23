@@ -1,0 +1,29 @@
+.scene-editor-right-sider {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  width: 300px;
+  height: calc(100vh - 48px);
+  background-color: #333;
+  z-index: 9;
+  color: #fff;
+}
+
+.scene-editor-right-sider .title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #fff;
+  padding: 8px;
+}
+
+.scene-editor-right-sider .content {
+  padding: 8px 0;
+}
+
+.scene-editor-right-sider .ant-form-item .ant-form-item-label > label {
+  color: #ccc;
+}
+
+.scene-editor-right-sider .ant-input-outlined[disabled] {
+  color: #ccc;
+}
