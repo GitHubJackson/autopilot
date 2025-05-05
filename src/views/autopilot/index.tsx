@@ -30,10 +30,17 @@ function Autopilot() {
   }, []);
 
   useEffect(() => {
-    const sceneData = localStorage.getItem("sceneData");
-    const data = JSON.parse(sceneData || "{}") as ISceneData;
-    console.log("===sceneData===", data);
-    myRenderer.loadSceneData(data);
+    try {
+      const sceneData = localStorage.getItem("sceneData");
+      if (sceneData) {
+        return;
+      }
+      const data = JSON.parse(sceneData || "{}") as ISceneData;
+      console.log("===sceneData===", data);
+      myRenderer.loadSceneData(data);
+    } catch (err) {
+      console.log(err);
+    }
   }, []);
 
   return (
